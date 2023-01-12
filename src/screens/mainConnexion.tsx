@@ -9,7 +9,7 @@ export const Connexion = ({ navigation } : Props) => {
 
     return(
         <View>
-            <Text onPress={ () => navigation.navigate('Connexion2')}>
+            <Text onPress={ () => navigation.navigate('Maps')}>
                 Coucou
             </Text>
         </View>
