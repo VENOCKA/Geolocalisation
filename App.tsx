@@ -1,12 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { Connexion } from './components/screens/mainConnexion';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Connexion2 } from './components/screens/mainConnexion2';
+
+const Stack = createStackNavigator<RootStackParamList>();
+
+type RootStackParamList = {
+  Connexion: undefined;
+  Connexion2: undefined;
+};
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Connexion'>
+        <Stack.Screen name='Connexion' component={Connexion}/>
+        <Stack.Screen name='Connexion2' component={Connexion2}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
