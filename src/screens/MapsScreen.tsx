@@ -1,15 +1,16 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { Button, View, StyleSheet } from 'react-native'
 import MapView from 'react-native-maps'
 import { StackNavigatorParams } from '../utils/router'
 
 type Props = NativeStackScreenProps<StackNavigatorParams, 'Maps'>
 
-export const Maps = ({ navigation } : Props) => {
+export const MapsScreen = ({ navigation } : Props) => {
 
     return(
         <View style={styles.container}>
+            <Button title="Go Home" onPress={ () => navigation.navigate('Home')} />
             <MapView 
                 style={styles.map}
                 initialRegion={{
