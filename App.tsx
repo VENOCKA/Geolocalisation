@@ -1,8 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { Connexion } from './src/screens/mainConnexion';
-import { Connexion2 } from './src/screens/mainConnexion2';
-import { Stack } from './src/utils/router';
+import { StyleSheet, Text, View } from 'react-native'
+import { NavigationContainer } from '@react-navigation/native'
+import { initializeApp } from 'firebase/app'
+
+import { Connexion } from './src/screens/mainConnexion'
+import { Connexion2 } from './src/screens/mainConnexion2'
+
+import { Stack } from './src/utils/router'
+
+import { firebaseConfig } from './src/configs/firebase'
+
+initializeApp(firebaseConfig)
 
 export default function App() {
   return (

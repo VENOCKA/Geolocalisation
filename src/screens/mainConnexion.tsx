@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React from 'react'
 import { Text, View } from 'react-native'
 import { StackNavigatorParams } from '../utils/router'
+import GoogleAuth from '../components/GoogleAuth' 
 
 type Props = NativeStackScreenProps<StackNavigatorParams, 'Connexion'>
 
@@ -12,6 +13,7 @@ export const Connexion = ({ navigation } : Props) => {
             <Text onPress={ () => navigation.navigate('Connexion2')}>
                 Coucou
             </Text>
+            <GoogleAuth/>
         </View>
     )
 }
