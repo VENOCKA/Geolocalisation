@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Geolocalisation",
-    "slug": "Geolocalisation",
+    "slug": "geolocalisation",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,12 +18,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.geolocalisation"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#FFFFFF",
+        "packageName": "com.geolocalisation"
       }
     },
     "web": {
