@@ -1,12 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React from 'react'
 import { Text, View } from 'react-native'
+import { StackNavigatorParams } from '../utils/router'
 
-type RootStackParamList = {
-    Connexion2: undefined;
-};
-
-type Props = NativeStackScreenProps<RootStackParamList, 'Connexion2'>
+type Props = NativeStackScreenProps<StackNavigatorParams, 'Connexion2'>
 
 export function Connexion2({ navigation } : Props) {
 
