@@ -5,7 +5,7 @@ import { StackNavigatorParams } from '../utils/router'
 
 type Props = NativeStackScreenProps<StackNavigatorParams, 'Connexion'>
 
-export function Connexion({ navigation } : Props) {
+export const Connexion = ({ navigation } : Props) => {
 
     return(
         <View>
