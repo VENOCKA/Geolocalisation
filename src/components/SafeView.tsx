@@ -1,8 +1,14 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export const SafeView = ({ isSafe, style, children }: any) => {
+type Props = {
+  isSafe: boolean;
+  style?: any;
+  children: React.ReactNode;
+};
+
+export const SafeView = ({ isSafe, style, children }: Props) => {
   const insets = useSafeAreaInsets()
 
   if (isSafe) {
@@ -11,5 +17,5 @@ export const SafeView = ({ isSafe, style, children }: any) => {
     )
   }
 
-  return <View style={StyleSheet.flatten(style)}>{children}</View>
+  return <View style={style}>{children}</View>
 }
