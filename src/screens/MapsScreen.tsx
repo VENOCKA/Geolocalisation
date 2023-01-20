@@ -4,16 +4,27 @@ import { Button, View, StyleSheet, Text } from 'react-native'
 import MapView from 'react-native-maps'
 import { StackNavigatorParams } from '../utils/router'
 import * as Location from 'expo-location';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 type Props = NativeStackScreenProps<StackNavigatorParams, 'Maps'>
 
 export const MapsScreen = ({ navigation } : Props) => {
+  const [loading, setLoading] = useState(false);
+
+  const startLoading = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  };
 
   const [localLatitude, setLatitude] = useState(0)
   const [localLongitude, setLongitude] = useState(0)
 
 
   useEffect(() => {
+    startLoading();
     (async () => {
       
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -22,26 +33,41 @@ export const MapsScreen = ({ navigation } : Props) => {
         return;
       }
 
-      const location2 = await Location.getCurrentPositionAsync({});
-      setLatitude(location2?.coords?.latitude)
-      setLongitude(location2?.coords?.longitude)
+      await Location.getCurrentPositionAsync({}).then( location2 => {
+        setLatitude(location2?.coords?.latitude)
+        setLongitude(location2?.coords?.longitude)
+        console.log("latitude : " + localLatitude)
+        console.log("Longitude : " + localLongitude)
+      })
     })();
-  }, []);
+  }, [localLatitude, localLongitude]);
 
     return(
         <View style={styles.container}>
-            <Button title="Go Home" onPress={ () => navigation.navigate('Home')} />
-            <MapView
-              style={styles.map}
-              initialRegion={{
-                latitude: localLatitude,
-                longitude: localLongitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
-            >
+            <Spinner
+            //visibility of Overlay Loading Spinner
+            visible={loading}
+            //Text with the Spinner
+            textContent={'Loading...'}
+            //Text style of the Spinner Text
+            />
+            { localLatitude !== 0 && localLongitude !== 0 ?
+            <>
+              <Button title="Go Home" onPress={ () => navigation.navigate('Home')} />
+              <MapView
+                style={styles.map}
+                initialRegion={{
+                  latitude: localLatitude,
+                  longitude: localLongitude,
+                  latitudeDelta: 0.03,
+                  longitudeDelta: 0.03,
+                }}
+              >
 
-            </MapView>
+              </MapView> 
+            </>
+            : null}
+            
         </View>
     )
 }
@@ -53,5 +79,8 @@ const styles = StyleSheet.create({
     map: {
       width: '100%',
       height: '100%',
+    },
+    spinnerTextStyle: {
+      color: '#FFF',
     },
   });
