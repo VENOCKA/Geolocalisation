@@ -14,3 +14,9 @@ export const nameValidator = (name: string) => {
     if (!name || name.length <= 0) return 'Name cannot be empty.'
     return ''
 }
+
+export const confirmePasswordValidator = (password: string, confirmepassword: string) => {
+    if (!confirmepassword || confirmepassword.length <= 0) return 'Confirme Password cannot be empty.'
+    if (password !== confirmepassword) return 'Confirme Password is different'
+    return ''
+}
