@@ -1,10 +1,12 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
-import { Button, View, StyleSheet, Text } from 'react-native'
+import { StyleSheet } from 'react-native'
 import MapView from 'react-native-maps'
+import * as Location from 'expo-location'
+import Spinner from 'react-native-loading-spinner-overlay'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+
 import { StackNavigatorParams } from '../utils/router'
-import * as Location from 'expo-location';
-import Spinner from 'react-native-loading-spinner-overlay';
 
 
 type Props = NativeStackScreenProps<StackNavigatorParams, 'Maps'>
@@ -28,6 +30,8 @@ export const MapsScreen = ({ navigation } : Props) => {
     (async () => {
       
       let { status } = await Location.requestForegroundPermissionsAsync();
+      console.log("status : " + status);
+      
       if (status !== 'granted') {
         console.log('Permission to access location was denied');
         return;
@@ -43,7 +47,7 @@ export const MapsScreen = ({ navigation } : Props) => {
   }, [localLatitude, localLongitude]);
 
     return(
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Spinner
             //visibility of Overlay Loading Spinner
             visible={loading}
@@ -53,7 +57,7 @@ export const MapsScreen = ({ navigation } : Props) => {
             />
             { localLatitude !== 0 && localLongitude !== 0 ?
             <>
-              <Button title="Go Home" onPress={ () => navigation.navigate('Home')} />
+              {/* <Button title="Go Home" onPress={ () => navigation.navigate('Home')} /> */}
               <MapView
                 style={styles.map}
                 initialRegion={{
@@ -68,7 +72,7 @@ export const MapsScreen = ({ navigation } : Props) => {
             </>
             : null}
             
-        </View>
+        </SafeAreaView>
     )
 }
 

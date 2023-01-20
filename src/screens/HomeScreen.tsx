@@ -1,7 +1,8 @@
-import React from 'react'
-import { View, StyleSheet, Button, Text } from 'react-native'
+import React, { useState } from 'react'
+import { StyleSheet, Button } from 'react-native'
 import { signOut } from 'firebase/auth'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { StackNavigatorParams } from '../utils/router'
 import { auth } from '../configs/firebase'
@@ -14,16 +15,23 @@ export const HomeScreen = ({ navigation } : Props) => {
     signOut(auth).catch(error => console.log('Error logging out: ', error))
   }
 
+
   return (
-    <View style={styles.container}>
-      <Button title="Go Map" onPress={ () => navigation.navigate('Maps')} />
+    <SafeAreaView style={styles.container}>
+      {/* <Button title="Go Map" onPress={ () => navigation.navigate('Maps')} /> */}
       <Button title='Sign Out' onPress={handleLogout} />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    padding: 20,
+    width: '100%',
+    maxWidth: 340,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   }
-});
+})

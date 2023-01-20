@@ -1,19 +1,19 @@
 import React, { useState } from 'react'
 import { TouchableOpacity, StyleSheet, Text, View, Alert } from 'react-native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
 
 import { theme } from '../configs/theme'
 import { StackNavigatorParams } from '../utils/router'
 import { createAccount } from '../utils/auth'
 import { confirmePasswordValidator, emailValidator, passwordValidator } from '../utils/validator'
 
-import { SafeView } from '../components/SafeView'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
 import Header from '../components/Header'
 import Button from '../components/Button'
 import TextInput from '../components/TextInput'
-import BackButton from '../components/BackButton'
 import SocialButton from '../components/SocialButton'
 import GoogleAuth from '../components/Auth/GoogleAuth'
 
@@ -43,7 +43,7 @@ export const RegisterScreen = ({ navigation } : Props) => {
 
   return (
     <Background>
-      <SafeView isSafe style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <Logo />
         <Header>Welcome</Header>
         <TextInput
@@ -102,7 +102,7 @@ export const RegisterScreen = ({ navigation } : Props) => {
             onPress={() => console.log('SocialButtonGoogle')}
           />
         </View>
-      </SafeView>
+      </SafeAreaView>
     </Background>
   )
 }

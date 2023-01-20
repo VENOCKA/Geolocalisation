@@ -7,7 +7,7 @@ import { googleAuth, idToken } from '../../utils/auth'
 import SocialButton from '../SocialButton'
 
 export default function GoogleAuth() {
-    const [request, response, promptAsync] = useIdTokenAuthRequest(idToken)
+    const [request, response, promptAsync] = useIdTokenAuthRequest(idToken, { useProxy: true })
 
     useEffect(() => {
       googleAuth(response)

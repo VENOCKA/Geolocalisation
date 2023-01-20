@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { TouchableOpacity, StyleSheet, Text, View, Alert } from 'react-native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { theme } from '../configs/theme'
 
@@ -8,7 +9,6 @@ import { emailAuth } from '../utils/auth'
 import { StackNavigatorParams } from '../utils/router'
 import { emailValidator, passwordValidator } from '../utils/validator'
 
-import { SafeView } from '../components/SafeView'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
 import Header from '../components/Header'
@@ -47,7 +47,7 @@ export const LoginScreen = ({ navigation } : Props) => {
 
   return (
     <Background>
-        <SafeView isSafe style={styles.container}>
+        <SafeAreaView style={styles.container}>
         <Logo />
         <Header>Welcome</Header>
         <TextInput
@@ -104,7 +104,7 @@ export const LoginScreen = ({ navigation } : Props) => {
               onPress={() => console.log('SocialButtonGoogle')}
             />
           </View>
-        </SafeView>
+        </SafeAreaView>
       </Background>
   )
 }
