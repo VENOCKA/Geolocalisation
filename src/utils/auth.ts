@@ -4,6 +4,7 @@ import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth/react-native'
 
 import { auth } from '../configs/firebase'
+import { getUser, setUser } from './database'
 import { confirmePasswordValidator, emailValidator, passwordValidator } from './validator'
 
 export const useGoogleAuthRequest = () => {
@@ -32,6 +33,22 @@ export const googleAuth = async (response: AuthSessionResult | null) => {
       const credential = GoogleAuthProvider.credential(id_token)
       const auth = getAuth()
       await signInWithCredential(auth, credential)
+      .then((userCredential) => {
+        getUser(userCredential.user.uid)
+        .then((user) => {
+          if (!user) {
+            setUser(userCredential.user.uid, {
+              email: userCredential.user.email,
+              name: userCredential.user.displayName,
+              photo: userCredential.user.photoURL,
+              friends: [],
+            })
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        }) 
+      })
       .catch((error) => {
         console.log(error)
       })
@@ -41,6 +58,22 @@ export const googleAuth = async (response: AuthSessionResult | null) => {
 export const emailAuth = async (email: string, password: string) => {
     // const auth = getAuth()
     await signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      getUser(userCredential.user.uid)
+        .then((user) => {
+          if (!user) {
+            setUser(userCredential.user.uid, {
+              email: userCredential.user.email,
+              name: userCredential.user.displayName,
+              photo: userCredential.user.photoURL,
+              friends: [],
+            })
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    })
     .catch((error) => {
       console.log(error)
     })
@@ -49,6 +82,22 @@ export const emailAuth = async (email: string, password: string) => {
 export const createAccount = async (email: string, password: string, confirmePassword: string) => {
     // const auth = getAuth()
     await createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      getUser(userCredential.user.uid)
+        .then((user) => {
+          if (!user) {
+            setUser(userCredential.user.uid, {
+              email: userCredential.user.email,
+              name: userCredential.user.displayName,
+              photo: userCredential.user.photoURL,
+              friends: [],
+            })
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    })
     .catch((error) => {
       console.log(error)
     })

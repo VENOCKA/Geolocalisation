@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { StyleSheet, Button, Text } from 'react-native'
+import { StyleSheet, Button, Text, View, Image } from 'react-native'
 import { signOut } from 'firebase/auth'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -35,12 +35,20 @@ export const HomeScreen = ({ navigation } : Props) => {
     <SafeAreaView style={styles.container}>
       {/* <Button title="Go Map" onPress={ () => navigation.navigate('Maps')} /> */}
       <Button title='Sign Out' onPress={handleLogout} />
-      {data && data.friends.map((friend: any) => {
-          return (
-            <Text key={friend}>{friend}</Text>
-          )
-        })
-      }
+      <View style={{flex: 1 }}>
+        {data && <Image source={{ uri: data.photo }} />}
+
+        {data && <Text>{data.name}</Text>}
+        {data && <Text>{data.email}</Text>}
+
+        {data && data.friends.map((friend: any) => {
+            return (
+              <Text key={friend}>{friend}</Text>
+            )
+          })
+        }
+      </View>
+      
     </SafeAreaView>
   );
 };
