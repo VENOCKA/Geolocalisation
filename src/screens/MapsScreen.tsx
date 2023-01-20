@@ -36,8 +36,6 @@ export const MapsScreen = ({ navigation } : Props) => {
       await Location.getCurrentPositionAsync({}).then( location2 => {
         setLatitude(location2?.coords?.latitude)
         setLongitude(location2?.coords?.longitude)
-        console.log("latitude : " + localLatitude)
-        console.log("Longitude : " + localLongitude)
       })
     })();
   }, [localLatitude, localLongitude]);
