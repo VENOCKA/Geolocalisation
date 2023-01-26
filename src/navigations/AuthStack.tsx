@@ -1,8 +1,7 @@
 import React from 'react'
 
 import { Stack } from '../utils/router'
-import { LoginScreen } from '../screens'
-import { RegisterScreen } from '../screens/RegisterScreen'
+import { LoginScreen, RegisterScreen } from '../screens'
 
 export const AuthStack = () => {
   return (

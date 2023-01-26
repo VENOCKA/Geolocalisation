@@ -13,7 +13,7 @@ export const RootNavigator = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    console.log('user', user);
+    console.log('RootNavigator => user :', user);
     
     // onAuthStateChanged returns an unsubscriber
     const unsubscribeAuthStateChanged = onAuthStateChanged(auth,

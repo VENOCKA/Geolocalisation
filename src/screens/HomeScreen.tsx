@@ -20,7 +20,7 @@ export const HomeScreen = ({ navigation } : Props) => {
     getUser(user.uid)
     .then((data) => {
       setData(data)
-      console.log('data', data);
+      console.log('HomeScreen => data : ', data);
     })
     
   }, [user])
@@ -56,9 +56,9 @@ export const HomeScreen = ({ navigation } : Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    width: '100%',
-    maxWidth: 340,
+    // padding: 20,
+    // width: '100%',
+    // maxWidth: 340,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
