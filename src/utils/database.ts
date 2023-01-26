@@ -30,6 +30,7 @@ export const getFriends = async (uid: string) => {
             const userInfo = await getDoc(doc.data().userInfo).then((doc) => doc.data())
 
             friends.push({
+                chatDocRef: doc.data().chatInfo,
                 userDocRef: doc.data().userInfo,
                 userInfo: userInfo,
                 userId: doc.id

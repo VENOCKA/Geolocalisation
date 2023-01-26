@@ -40,9 +40,9 @@ const TabNavigator = () => {
 
 export const AppStack = () => {
   return (
-    <Stack.Navigator initialRouteName='Home'>
+    <Stack.Navigator initialRouteName='Root'>
        <Stack.Screen
-          name="Home"
+          name="Root"
           component={TabNavigator}
           options={{ headerShown: false }}
         />
