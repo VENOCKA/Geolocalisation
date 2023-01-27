@@ -1,7 +1,8 @@
 
 
 import { Auth } from 'firebase/auth/react-native';
-import { doc, getDoc, getDocs, setDoc, getDocFromCache, collection } from 'firebase/firestore'
+import { doc, getDoc, getDocs, setDoc, addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore'
+import { Dispatch } from 'react';
 import { firestore } from "../configs/firebase";
 
 
@@ -39,4 +40,36 @@ export const getFriends = async (uid: string) => {
     })()
 
     return friends
+}
+
+export const getMessage = async (chatDocRef: any, _setData: { (value: any): void }) => {
+    const q = query(collection(firestore, chatDocRef.path, 'messages'), orderBy('createAt', 'asc'))
+
+    const unsub = onSnapshot(q,
+        (snapshot: any) => {
+            let messages: any = []
+
+            snapshot.forEach((doc: any) => {
+                messages = [...messages, {
+                    id: doc.id,
+                    ...doc.data(),
+                    userId: doc.data().user.id,
+                }];
+            })
+            _setData(messages)
+        },
+        (error: any) => {
+            console.log(error)
+        }
+    )
+}
+
+export const sendMessage = async (chatDocRef: any, uid: string, text: string) => {
+    const docRef = collection(firestore, chatDocRef.path, 'messages')
+    await addDoc(docRef, {
+        text: text,
+        user: doc(firestore, 'users', uid),
+        createAt: new Date()
+    })
+    console.log('Message sent')
 }

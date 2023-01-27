@@ -45,7 +45,7 @@ export const ContactsScreen = () => {
                 title={item.userInfo.name}
                 description="Item description"
                 left={props => <Avatar.Text size={32} label={item.userInfo.name[0]} />}
-                onPress={() => navigation.navigate('Message')}
+                onPress={() => navigation.navigate('Message', {contact: item})}
             />
 
           ))}
