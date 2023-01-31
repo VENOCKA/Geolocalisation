@@ -2,7 +2,8 @@
 
 import { Auth } from 'firebase/auth/react-native';
 import { doc, getDoc, getDocs, setDoc, addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore'
-import { Dispatch } from 'react';
+import { Dispatch, RefObject } from 'react';
+import { FlatList } from 'react-native-gesture-handler';
 import { firestore } from "../configs/firebase";
 
 
@@ -42,7 +43,7 @@ export const getFriends = async (uid: string) => {
     return friends
 }
 
-export const getMessage = async (chatDocRef: any, _setData: { (value: any): void }) => {
+export const getMessage = async (chatDocRef: any, _setData: { (value: any): void }, refFlatList: RefObject<FlatList<any>>) => {
     const q = query(collection(firestore, chatDocRef.path, 'messages'), orderBy('createAt', 'asc'))
 
     const unsub = onSnapshot(q,
@@ -57,11 +58,14 @@ export const getMessage = async (chatDocRef: any, _setData: { (value: any): void
                 }];
             })
             _setData(messages)
+            refFlatList.current?.scrollToEnd()
         },
         (error: any) => {
             console.log(error)
         }
     )
+
+    refFlatList.current?.scrollToEnd()
 }
 
 export const sendMessage = async (chatDocRef: any, uid: string, text: string) => {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { StyleSheet, View} from 'react-native'
 import { Avatar, Card, Text, TextInput } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -16,6 +16,7 @@ export const MessageScreen = () => {
   const [contact, setContact] = useState<any>(null)
   const [data, setData] = useState<any>(null)
   const [text, setText] = useState("")
+  const refFlatList = useRef<FlatList>(null)
 
   useEffect(() => {
     // console.log('MessageScreen => navigation.getState().routes[1].params.contact : ', navigation.getState().routes[1].params.contact)
@@ -26,7 +27,8 @@ export const MessageScreen = () => {
     if (!contact) {
       return
     }
-    getMessage(contact.chatDocRef, setData)
+
+    getMessage(contact.chatDocRef, setData, refFlatList)
   }, [contact])
 
   const onSubmitEditingPress = () => {
@@ -36,6 +38,7 @@ export const MessageScreen = () => {
     }
     sendMessage(contact.chatDocRef, user.uid, text)
     setText("")
+    refFlatList.current?.scrollToEnd()
     console.log('MessageScreen => onSubmitEditingPress : End', )
   }
   
@@ -44,31 +47,37 @@ export const MessageScreen = () => {
       <View style={styles.container__text}>
         <Text>Message Screen</Text> 
       </View>
-      <FlatList
-        style={styles.container__list}
-        data={data}
-        renderItem={({ item }) => (
-          <View style={styles.container__message} key={item.id}>
-            { item.userId === user.uid ? (
-                <Card style={[styles.container__card, styles.container__card_right]}>
-                  <Card.Content style={styles.container__card_Content}>
-                    <Text variant="bodySmall">{item.text}</Text>
-                    <Avatar.Text size={16} label={'U'} />
-                  </Card.Content>
-                </Card>
-              ) : (
-                <Card style={[styles.container__card, styles.container__card_left]}>
-                  <Card.Content style={styles.container__card_Content}>
-                    <Avatar.Text size={16} label={contact.userInfo.name[0]} />
-                    <Text variant="bodySmall">{item.text}</Text>
-                  </Card.Content>
-                </Card>
-              )
-            }
-          </View>
-          )}
-        keyExtractor={item => item.id}
-      />
+      { data && (
+        <FlatList
+          style={styles.container__list}
+          ref={refFlatList}
+          data={data}
+          renderItem={({ item }) => (
+            <View style={styles.container__message} key={item.id}>
+              { item.userId === user.uid ? (
+                  <Card style={[styles.container__card, styles.container__card_right]}>
+                    <Card.Content style={styles.container__card_Content}>
+                      <Text variant="bodySmall">{item.text}</Text>
+                      <Avatar.Text size={16} label={'U'} />
+                    </Card.Content>
+                  </Card>
+                ) : (
+                  <Card style={[styles.container__card, styles.container__card_left]}>
+                    <Card.Content style={styles.container__card_Content}>
+                      <Avatar.Text size={16} label={contact.userInfo.name[0]} />
+                      <Text variant="bodySmall">{item.text}</Text>
+                    </Card.Content>
+                  </Card>
+                )
+              }
+            </View>
+            )}
+            onLayout={() => refFlatList.current?.scrollToEnd()}
+          keyExtractor={item => item.id}
+        />
+      )
+      }
+      
       <View style={styles.container__input}>
         <TextInput
           // label="Email"
