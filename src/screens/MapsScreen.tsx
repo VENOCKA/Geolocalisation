@@ -1,18 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet } from 'react-native'
-import MapView from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 import * as Location from 'expo-location'
 import Spinner from 'react-native-loading-spinner-overlay'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-
+import { AuthenticatedContext } from '../providers'
 import { StackNavigatorParams } from '../utils/router'
+import { getFriends, getUser, setGeoloc } from '../utils/database'
+import { GeoPoint } from 'firebase/firestore'
 
 
 type Props = NativeStackScreenProps<StackNavigatorParams, 'Maps'>
 
+
+
 export const MapsScreen = ({ navigation } : Props) => {
   const [loading, setLoading] = useState(false);
+  const [friendsMark, setFriendsMark] = useState([])
+
+  const PushInfoIntoBdd = () => {
+    Location.getCurrentPositionAsync({}).then( location2 => {
+      setLatitude(location2?.coords?.latitude)
+      setLongitude(location2?.coords?.longitude)
+      const geoPoint = new GeoPoint(localLatitude, localLongitude)
+      setGeoloc(user.uid, {
+        Geoloc: {geoPoint}
+      })
+    })
+  }
 
   const startLoading = () => {
     setLoading(true);
@@ -23,6 +39,16 @@ export const MapsScreen = ({ navigation } : Props) => {
 
   const [localLatitude, setLatitude] = useState(0)
   const [localLongitude, setLongitude] = useState(0)
+  const { user, setUser } = useContext(AuthenticatedContext)
+
+  useEffect(() => {
+    getUser(user.uid)  
+    getFriends(user.uid).then()
+  }, [user])
+
+  useEffect(() => {
+    PushInfoIntoBdd()
+  }, [10000])
 
 
   useEffect(() => {
@@ -37,12 +63,16 @@ export const MapsScreen = ({ navigation } : Props) => {
         return;
       }
 
-      await Location.getCurrentPositionAsync({}).then( location2 => {
-        setLatitude(location2?.coords?.latitude)
-        setLongitude(location2?.coords?.longitude)
-      })
+      await PushInfoIntoBdd()
     })();
   }, [localLatitude, localLongitude]);
+
+  for (let i = 0; i < user.friends; i++) {
+    getUser(user.friends[i])
+    .then((data) => {
+    })
+    
+  }
 
     return(
         <SafeAreaView style={styles.container}>
@@ -65,6 +95,17 @@ export const MapsScreen = ({ navigation } : Props) => {
                   longitudeDelta: 0.03,
                 }}
               >
+                <Marker 
+                  coordinate={{
+                    latitude: localLatitude,
+                    longitude: localLongitude
+                  }}
+                  title={"Moi"}
+                >
+                </Marker>
+                {
+                  friendsMark
+                }
 
               </MapView> 
             </>

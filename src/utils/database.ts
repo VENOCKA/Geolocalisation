@@ -1,7 +1,5 @@
-
-
 import { Auth } from 'firebase/auth/react-native';
-import { doc, getDoc, getDocs, setDoc, addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore'
+import { doc, getDoc, getDocs, setDoc, addDoc, collection, onSnapshot, orderBy, query, updateDoc } from 'firebase/firestore'
 import { Dispatch, RefObject } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { firestore } from "../configs/firebase";
@@ -117,4 +115,11 @@ export const sendMessage = async (chatDocRef: any, uid: string, text: string) =>
         createAt: new Date()
     })
     console.log('Message sent')
+}
+
+
+export const setGeoloc = async (uid: string, data: any) => {
+    const docRef = doc(firestore, "users", uid)
+    await updateDoc(docRef, data)
+    console.log('User data saved');
 }
