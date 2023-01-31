@@ -8,7 +8,6 @@ export type StackNavigatorParams = {
     Login: undefined;
     Register: undefined;
     Chats: undefined;
-    Message: undefined;
 }
 
 export const Stack = createStackNavigator<StackNavigatorParams>()

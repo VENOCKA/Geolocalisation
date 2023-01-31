@@ -11,23 +11,25 @@ import { RootNavigator } from './src/navigations'
 
 
 // import { firebaseConfig } from './src/configs/firebase'
-import { AuthenticatedProvider } from './src/providers'
+import { AuthenticatedProvider, AppProvider } from './src/providers'
 
 // initializeApp(firebaseConfig)
 
 export default function App() {
   return (
-    <AuthenticatedProvider>
-      <SafeAreaProvider>
-        <RootNavigator/>
-      </SafeAreaProvider>
-      {/* <NavigationContainer>
-        <View style={styles.container}/>
-        <Stack.Navigator initialRouteName='Connexion'>
-          <Stack.Screen name='Connexion' component={Connexion}/>
-          <Stack.Screen name='Maps' component={Maps}/>
-        </Stack.Navigator>
-      </NavigationContainer> */}
-    </AuthenticatedProvider>
+    <AppProvider>
+      <AuthenticatedProvider>
+        <SafeAreaProvider>
+          <RootNavigator/>
+        </SafeAreaProvider>
+        {/* <NavigationContainer>
+          <View style={styles.container}/>
+          <Stack.Navigator initialRouteName='Connexion'>
+            <Stack.Screen name='Connexion' component={Connexion}/>
+            <Stack.Screen name='Maps' component={Maps}/>
+          </Stack.Navigator>
+        </NavigationContainer> */}
+      </AuthenticatedProvider>
+    </AppProvider>
   );
 }

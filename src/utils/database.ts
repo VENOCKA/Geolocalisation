@@ -43,6 +43,47 @@ export const getFriends = async (uid: string) => {
     return friends
 }
 
+export const onSnapshotUser = async (docRef: any, _setData: { (value: any): void }) => {
+    const unsub = onSnapshot(docRef,
+        (snapshot: any) => {
+            _setData(snapshot.data())
+            console.log('User data updated')
+        },
+        (err: any) => {
+            console.log(err)
+        }
+    )
+}
+
+export const onSnapshotFriends = async (uid: string, data: any, _setData: { (value: any): void }) => {
+    const docRef = collection(firestore, 'users', uid, 'friends')
+    const unsub = onSnapshot(docRef,
+        (snapshot: any) => {
+            let friends: any = {...data}
+        
+            snapshot.forEach((doc: any) => {
+
+                onSnapshotUser(doc.data().userInfo, (user: any) => {
+                    const u: any = {}
+                    u[doc.id] = {
+                        ...user,
+                        id: doc.id,
+                        chatDocRef: doc.data().chatInfo,
+                        userDocRef: doc.data().userInfo,
+                    }
+                    friends = {...friends, ...u}
+                    _setData(friends)
+                })
+                
+            })
+            console.log('Friends data updated')
+        },
+        (error: any) => {
+            console.log(error)
+        }
+    )
+}
+
 export const getMessage = async (chatDocRef: any, _setData: { (value: any): void }, refFlatList: RefObject<FlatList<any>>) => {
     const q = query(collection(firestore, chatDocRef.path, 'messages'), orderBy('createAt', 'asc'))
 

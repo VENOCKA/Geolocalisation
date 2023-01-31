@@ -6,25 +6,43 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { StackNavigatorParams } from '../utils/router'
 import { auth } from '../configs/firebase'
-import { getUser } from '../utils/database'
-import { AuthenticatedContext } from '../providers'
+import { getFriends, getUser, onSnapshotFriends } from '../utils/database'
+import { AuthenticatedContext, AppContext } from '../providers'
 
 type Props = NativeStackScreenProps<StackNavigatorParams, 'Home'>
 
 export const HomeScreen = ({ navigation } : Props) => {
-  const { user, setUser } = useContext(AuthenticatedContext)
+  const { user } = useContext(AuthenticatedContext)
+  const { 
+    friends, setFriends,
+    messages, setMessages,
+    userData, setUserData  
+  } = useContext(AppContext)
+
   const [data, setData] = useState<any>(null)
 
   useEffect(() => {
+    onSnapshotFriends(
+      user.uid, 
+      friends, 
+      setFriends
+    )
+  }, [])
 
+  useEffect(() => {
+    // console.log('HomeScreen => useEffect userData : ', userData);
+    
     getUser(user.uid)
     .then((data) => {
+      setUserData({...userData, ...data})
       setData(data)
-      console.log('HomeScreen => data : ', data);
     })
-    
   }, [user])
-  
+
+  useEffect(() => {
+    console.log('HomeScreen => useEffect friends : ', friends);
+  }, [friends])
+
 
   const handleLogout = () => {
     signOut(auth).catch(error => console.log('Error logging out: ', error))
@@ -36,17 +54,9 @@ export const HomeScreen = ({ navigation } : Props) => {
       {/* <Button title="Go Map" onPress={ () => navigation.navigate('Maps')} /> */}
       <Button title='Sign Out' onPress={handleLogout} />
       <View style={{flex: 1 }}>
-        {data && <Image source={{ uri: data.photo }} />}
-
-        {data && <Text>{data.name}</Text>}
-        {data && <Text>{data.email}</Text>}
-
-        {data && data.friends.map((friend: any) => {
-            return (
-              <Text key={friend}>{friend}</Text>
-            )
-          })
-        }
+        {userData && <Image source={{ uri: userData.photo }} />}
+        {userData && <Text>{userData.name}</Text>}
+        {userData && <Text>{userData.email}</Text>}
       </View>
       
     </SafeAreaView>
