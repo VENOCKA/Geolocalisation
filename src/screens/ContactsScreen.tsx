@@ -5,7 +5,7 @@ import { Avatar, FAB, List, Searchbar, Text } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 
 import { getFriends } from '../utils/database'
-import { AuthenticatedContext } from '../providers'
+import { AppContext, AuthenticatedContext } from '../providers'
 
 import { StackNavigatorParams } from '../utils/router'
 
@@ -13,18 +13,27 @@ import { StackNavigatorParams } from '../utils/router'
 export const ContactsScreen = () => {
   const navigation = useNavigation<StackNavigatorParams>()
   const { user } = useContext(AuthenticatedContext)
-  const [data, setData] = useState<any>(null)
+  const { friends } = useContext(AppContext)
+
+  const [data, setData] = useState<any>([])
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    
-    getFriends(user.uid)
-    .then((data) => {
-        setData(data)
-        console.log('ContactsScreen => data : ', data)
-    })
-    
-  }, [user])
+    let t: any[] = []
+    for (const key in friends) {
+      t = [...t, friends[key]]
+    }
+    setData(t) 
+    // getFriends(user.uid)
+    // .then((data) => {
+    //     setData(data)
+    //     console.log('ContactsScreen => data : ', data)
+    // })
+  }, [friends])
+
+  useEffect(() => {
+    console.log('ContactsScreen => useEffect data : ', data);
+  }, [data])
 
   const onChangeSearch = (query: string) => setSearchQuery(query)
   
@@ -41,11 +50,11 @@ export const ContactsScreen = () => {
       <View style={styles.container__list}>
         {data && data.map((item: any) => (
             <List.Item
-                key={item.userId}
-                title={item.userInfo.name}
+                key={item.id}
+                title={item.name}
                 description="Item description"
-                left={props => <Avatar.Text size={32} label={item.userInfo.name[0]} />}
-                onPress={() => navigation.navigate('Message', {contact: item})}
+                left={props => <Avatar.Text size={32} label={item.name[0]} />}
+                onPress={() => navigation.navigate('Message', {contact: item.id})}
             />
 
           ))}

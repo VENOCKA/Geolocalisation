@@ -40,7 +40,7 @@ export const HomeScreen = ({ navigation } : Props) => {
   }, [user])
 
   useEffect(() => {
-    console.log('HomeScreen => useEffect friends : ', friends);
+    // console.log('HomeScreen => useEffect friends : ', friends);
   }, [friends])
 
 

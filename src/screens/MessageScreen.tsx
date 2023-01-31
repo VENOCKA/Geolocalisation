@@ -4,7 +4,7 @@ import { Avatar, Card, Text, TextInput } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { getMessage, sendMessage } from '../utils/database'
-import { AuthenticatedContext } from '../providers'
+import { AppContext, AuthenticatedContext } from '../providers'
 import { StackNavigatorParams } from '../utils/router'
 import { useNavigation } from '@react-navigation/native'
 import { FlatList } from 'react-native-gesture-handler'
@@ -12,6 +12,7 @@ import { FlatList } from 'react-native-gesture-handler'
 
 export const MessageScreen = () => {
   const { user } = useContext(AuthenticatedContext)
+  const { friends } = useContext(AppContext)
   const navigation = useNavigation<StackNavigatorParams>()
   const [contact, setContact] = useState<any>(null)
   const [data, setData] = useState<any>(null)
@@ -28,7 +29,7 @@ export const MessageScreen = () => {
       return
     }
 
-    getMessage(contact.chatDocRef, setData, refFlatList)
+    getMessage(friends[contact].chatDocRef, setData, refFlatList)
   }, [contact])
 
   const onSubmitEditingPress = () => {
@@ -36,7 +37,7 @@ export const MessageScreen = () => {
     if (!text) {
       return
     }
-    sendMessage(contact.chatDocRef, user.uid, text)
+    sendMessage(friends[contact].chatDocRef, user.uid, text)
     setText("")
     refFlatList.current?.scrollToEnd()
     console.log('MessageScreen => onSubmitEditingPress : End', )
@@ -64,7 +65,7 @@ export const MessageScreen = () => {
                 ) : (
                   <Card style={[styles.container__card, styles.container__card_left]}>
                     <Card.Content style={styles.container__card_Content}>
-                      <Avatar.Text size={16} label={contact.userInfo.name[0]} />
+                      <Avatar.Text size={16} label={friends[contact].name[0]} />
                       <Text variant="bodySmall">{item.text}</Text>
                     </Card.Content>
                   </Card>

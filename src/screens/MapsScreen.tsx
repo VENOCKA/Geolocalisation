@@ -5,7 +5,7 @@ import * as Location from 'expo-location'
 import Spinner from 'react-native-loading-spinner-overlay'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { AuthenticatedContext } from '../providers'
+import { AuthenticatedContext, AppContext } from '../providers'
 import { StackNavigatorParams } from '../utils/router'
 import { getFriends, getUser, setGeoloc } from '../utils/database'
 import { GeoPoint } from 'firebase/firestore'
@@ -16,8 +16,21 @@ type Props = NativeStackScreenProps<StackNavigatorParams, 'Maps'>
 
 
 export const MapsScreen = ({ navigation } : Props) => {
+  const { friends } = useContext(AppContext)
+
   const [loading, setLoading] = useState(false);
-  const [friendsMark, setFriendsMark] = useState([])
+  const [friendsMark, setFriendsMark] = useState<any>([])
+
+  useEffect(() => {
+    for (const key in friends) {
+      if (friends[key]?.Geoloc?.geoPoint) {        
+        setFriendsMark([...friendsMark, { 
+          latitude: friends[key]?.Geoloc?.geoPoint.latitude,
+          longitude: friends[key]?.Geoloc?.geoPoint.longitude
+        }])
+      }
+    }
+  }, [friends])
 
   const PushInfoIntoBdd = () => {
     Location.getCurrentPositionAsync({}).then( location2 => {
@@ -54,9 +67,7 @@ export const MapsScreen = ({ navigation } : Props) => {
   useEffect(() => {
     startLoading();
     (async () => {
-      
       let { status } = await Location.requestForegroundPermissionsAsync();
-      console.log("status : " + status);
       
       if (status !== 'granted') {
         console.log('Permission to access location was denied');
@@ -103,10 +114,16 @@ export const MapsScreen = ({ navigation } : Props) => {
                   title={"Moi"}
                 >
                 </Marker>
-                {
-                  friendsMark
-                }
-
+                { friendsMark && friendsMark.map((friend: { latitude: any; longitude: any }, index: React.Key | null | undefined) => (
+                  <Marker
+                    key={index}
+                    coordinate={{
+                      latitude: friend.latitude,
+                      longitude: friend.longitude
+                    }}
+                    title={"Ami"}
+                  />
+                ))}
               </MapView> 
             </>
             : null}
