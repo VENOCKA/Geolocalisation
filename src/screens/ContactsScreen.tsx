@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Avatar, FAB, List, Searchbar, Text } from 'react-native-paper'
+import { Avatar, FAB, List, Searchbar, Text, Modal, Portal, Provider } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
-
+import TextInput from '../components/TextInput'
+import Button from '../components/Button'
 import { getFriends } from '../utils/database'
 import { AppContext, AuthenticatedContext } from '../providers'
 
@@ -36,34 +37,60 @@ export const ContactsScreen = () => {
   }, [data])
 
   const onChangeSearch = (query: string) => setSearchQuery(query)
+  const [visible, setVisible] = useState(false)
+  const showModal = () => setVisible(true)
+  const hideModal = () => setVisible(false)
+  const [email, setEmail] = useState({ value: '', error: '' })
+  const [password, setPassword] = useState({ value: '', error: '' })
   
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container__text}>
-        <Text>Contacts Screen</Text> 
-        <Searchbar
-          placeholder="Search"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-        />
-      </View>
-      <View style={styles.container__list}>
-        {data && data.map((item: any) => (
-            <List.Item
-                key={item.id}
-                title={item.name}
-                description="Item description"
-                left={props => <Avatar.Text size={32} label={item.name[0]} />}
-                onPress={() => navigation.navigate('Message', {contact: item.id})}
-            />
+      <Provider>
+        <View style={styles.container__text}>
+          <Text>Contacts Screen</Text> 
+          <Searchbar
+            placeholder="Search"
+            onChangeText={onChangeSearch}
+            value={searchQuery}
+          />
+        </View>
+        <View style={styles.container__list}>
+          {data && data.map((item: any) => (
+              <List.Item
+                  key={item.id}
+                  title={item.name}
+                  description="Item description"
+                  left={props => <Avatar.Text size={32} label={item.name[0]} />}
+                  onPress={() => navigation.navigate('Message', {contact: item.id})}
+              />
 
-          ))}
-      </View>
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => console.log('Pressed')}
-      />
+            ))}
+        </View>
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={() => showModal()}
+        />
+        <Portal>
+          <Modal visible={visible} onDismiss={hideModal} style={styles.popup}>
+            <TextInput
+              label="Email"
+              returnKeyType="next"
+              value={email.value}
+              onChangeText={text => setEmail({ value: text, error: '' })}
+              error={!!email.error}
+              errorText={email.error}
+              autoCapitalize="none"
+              autoComplete="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+            />
+            <Button mode="contained" onPress={() => console.log('test')}>
+              Ajouter un ami
+            </Button>
+          </Modal>
+        </Portal>
+      </Provider>
     </SafeAreaView>
   );
 };
@@ -93,5 +120,11 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
+  },
+  popup: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: 0,
+    left: 0,
   },
 })
