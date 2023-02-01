@@ -13,7 +13,7 @@ export const AppContext = createContext<any>(null)
 
 export const AppProvider = ({ children }: any) => {
   const [friends, setFriends] = useState({})
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState({})
   const [userData, setUserData] = useState({})
   const [data, setData] = useState(initialState)
 

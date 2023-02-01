@@ -32,7 +32,7 @@ export const ContactsScreen = () => {
   }, [friends])
 
   useEffect(() => {
-    console.log('ContactsScreen => useEffect data : ', data);
+    // console.log('ContactsScreen => useEffect data : ', data);
   }, [data])
 
   const onChangeSearch = (query: string) => setSearchQuery(query)
