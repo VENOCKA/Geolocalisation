@@ -85,7 +85,10 @@ export const ContactsScreen = () => {
               textContentType="emailAddress"
               keyboardType="email-address"
             />
-            <Button mode="contained" onPress={() => console.log('test')}>
+            <Button mode="contained" onPress={() => {
+              console.log('test')
+              hideModal()
+              }}>
               Ajouter un ami
             </Button>
           </Modal>
