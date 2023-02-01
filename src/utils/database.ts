@@ -1,5 +1,5 @@
 import { Auth } from 'firebase/auth/react-native';
-import { doc, getDoc, getDocs, setDoc, addDoc, collection, onSnapshot, orderBy, query, updateDoc } from 'firebase/firestore'
+import { doc, getDoc, getDocs, setDoc, addDoc, collection, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore'
 import { Dispatch, RefObject } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { firestore } from "../configs/firebase";
@@ -82,6 +82,31 @@ export const onSnapshotFriends = async (uid: string, data: any, _setData: { (val
     )
 }
 
+export const onSnapshotMessages = async (chatDocRef: any, data: any, _setData: { (value: any): void }, refFlatList: RefObject<FlatList<any>>) => {
+    const q = query(collection(firestore, chatDocRef.path, 'messages'), orderBy('createAt', 'asc'))
+    const unsub = onSnapshot(q,
+        (snapshot: any) => {
+            let messages: any = {...data}
+            let u: any = []
+        
+            snapshot.forEach((doc: any) => {
+                u = [...u, {
+                    id: doc.id,
+                    ...doc.data(),
+                    userId: doc.data().user.id,
+                }]  
+            })
+            messages[chatDocRef.id] = u
+
+            _setData(messages) 
+            console.log('New message added')
+        },
+        (error: any) => {
+            console.log(error)
+        }
+    )
+}
+
 export const getMessage = async (chatDocRef: any, _setData: { (value: any): void }, refFlatList: RefObject<FlatList<any>>) => {
     const q = query(collection(firestore, chatDocRef.path, 'messages'), orderBy('createAt', 'asc'))
 
@@ -107,14 +132,43 @@ export const getMessage = async (chatDocRef: any, _setData: { (value: any): void
     refFlatList.current?.scrollToEnd()
 }
 
-export const sendMessage = async (chatDocRef: any, uid: string, text: string) => {
-    const docRef = collection(firestore, chatDocRef.path, 'messages')
-    await addDoc(docRef, {
-        text: text,
-        user: doc(firestore, 'users', uid),
-        createAt: new Date()
-    })
-    console.log('Message sent')
+export const sendMessage = async (chatDocRef: any, uid: string, text: string, friend: any) => {
+    if (!chatDocRef) {
+        const colRef = collection(firestore, 'chats')
+        const userDocRef = doc(firestore, "users", uid)
+
+        const newChat = await addDoc(colRef, {})
+
+        const docRef = collection(firestore, newChat.path, 'messages')
+
+        const a = await addDoc(docRef, {
+            text: text,
+            user: userDocRef,
+            createAt: new Date()
+        })
+
+        const userChatRef = collection(firestore, 'users', uid, 'friends')
+        const friendChatRef = collection(firestore, 'users', friend.id, 'friends')
+
+        await updateDoc(doc(userChatRef, friend.id), {
+            chatInfo: newChat,
+        })
+
+        await updateDoc(doc(friendChatRef, uid), {
+            chatInfo: newChat,
+        })
+
+        console.log('new Message sent')
+    }
+    else {
+        const docRef = collection(firestore, chatDocRef.path, 'messages')
+        const a = await addDoc(docRef, {
+            text: text,
+            user: doc(firestore, 'users', uid),
+            createAt: new Date()
+        })
+        console.log('Message sent')
+    }
 }
 
 

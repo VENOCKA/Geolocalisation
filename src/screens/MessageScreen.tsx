@@ -3,7 +3,7 @@ import { StyleSheet, View} from 'react-native'
 import { Avatar, Card, Text, TextInput } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { getMessage, sendMessage } from '../utils/database'
+import { getMessage, onSnapshotMessages, sendMessage } from '../utils/database'
 import { AppContext, AuthenticatedContext } from '../providers'
 import { StackNavigatorParams } from '../utils/router'
 import { useNavigation } from '@react-navigation/native'
@@ -12,35 +12,52 @@ import { FlatList } from 'react-native-gesture-handler'
 
 export const MessageScreen = () => {
   const { user } = useContext(AuthenticatedContext)
-  const { friends } = useContext(AppContext)
+  const { friends, messages, setMessages } = useContext(AppContext)
   const navigation = useNavigation<StackNavigatorParams>()
   const [contact, setContact] = useState<any>(null)
-  const [data, setData] = useState<any>(null)
+  const [id, setId] = useState<any>(null)
+  const [data, setData] = useState<any>([])
   const [text, setText] = useState("")
   const refFlatList = useRef<FlatList>(null)
 
+
   useEffect(() => {
-    // console.log('MessageScreen => navigation.getState().routes[1].params.contact : ', navigation.getState().routes[1].params.contact)
+    console.log('MessageScreen => useEffect navigation : ', navigation.getState().routes[1].params.contact);
+    
     setContact(navigation.getState().routes[1].params.contact)
   }, [navigation])
 
   useEffect(() => {
+    setData([])
     if (!contact) {
       return
     }
+    if (!friends[contact]?.chatDocRef) {
+      return
+    }
 
-    getMessage(friends[contact].chatDocRef, setData, refFlatList)
+    if (!messages[friends[contact]?.chatDocRef.id]) {
+      onSnapshotMessages(friends[contact].chatDocRef, messages, setMessages, refFlatList)
+    }
+
+    // getMessage(friends[contact].chatDocRef, setData, refFlatList)
+    setId(friends[contact].chatDocRef.id)
   }, [contact])
 
+  useEffect(() => {
+    if (!id) {
+      return
+    }
+    setData(messages[id])
+  }, [messages[id]])
+
+
   const onSubmitEditingPress = () => {
-    console.log('MessageScreen => onSubmitEditingPress : Start', )
     if (!text) {
       return
     }
-    sendMessage(friends[contact].chatDocRef, user.uid, text)
+    sendMessage(friends[contact]?.chatDocRef, user.uid, text, friends[contact])
     setText("")
-    refFlatList.current?.scrollToEnd()
-    console.log('MessageScreen => onSubmitEditingPress : End', )
   }
   
   return (
@@ -65,7 +82,7 @@ export const MessageScreen = () => {
                 ) : (
                   <Card style={[styles.container__card, styles.container__card_left]}>
                     <Card.Content style={styles.container__card_Content}>
-                      <Avatar.Text size={16} label={friends[contact].name[0]} />
+                      <Avatar.Text size={16} label={friends[item.userId].name[0]} />
                       <Text variant="bodySmall">{item.text}</Text>
                     </Card.Content>
                   </Card>
@@ -73,7 +90,8 @@ export const MessageScreen = () => {
               }
             </View>
             )}
-            onLayout={() => refFlatList.current?.scrollToEnd()}
+          onContentSizeChange={() => refFlatList.current?.scrollToEnd()}
+          onLayout={() => refFlatList.current?.scrollToEnd()}
           keyExtractor={item => item.id}
         />
       )
