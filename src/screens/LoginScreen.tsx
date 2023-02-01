@@ -47,6 +47,7 @@ export const LoginScreen = ({ navigation } : Props) => {
 
   return (
     <Background>
+      
         <SafeAreaView style={styles.container}>
         <Logo />
         <Header>Welcome</Header>
