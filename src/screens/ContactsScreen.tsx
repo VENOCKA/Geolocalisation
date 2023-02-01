@@ -5,7 +5,7 @@ import { Avatar, FAB, List, Searchbar, Text, Modal, Portal, Provider } from 'rea
 import { useNavigation } from '@react-navigation/native'
 import TextInput from '../components/TextInput'
 import Button from '../components/Button'
-import { getFriends } from '../utils/database'
+import { addFriend, getFriends } from '../utils/database'
 import { AppContext, AuthenticatedContext } from '../providers'
 
 import { StackNavigatorParams } from '../utils/router'
@@ -41,7 +41,16 @@ export const ContactsScreen = () => {
   const showModal = () => setVisible(true)
   const hideModal = () => setVisible(false)
   const [email, setEmail] = useState({ value: '', error: '' })
-  const [password, setPassword] = useState({ value: '', error: '' })
+
+  const onAddContactPress = () => {
+    console.log('ContactsScreen => onAddContactPress email : ', email);
+    if (!email.value) {
+      return
+    }
+    addFriend(user.uid, email.value)
+    hideModal()
+  }
+
   
   return (
     <SafeAreaView style={styles.container}>
@@ -85,10 +94,7 @@ export const ContactsScreen = () => {
               textContentType="emailAddress"
               keyboardType="email-address"
             />
-            <Button mode="contained" onPress={() => {
-              console.log('test')
-              hideModal()
-              }}>
+            <Button mode="contained" onPress={() => onAddContactPress()}>
               Ajouter un ami
             </Button>
           </Modal>

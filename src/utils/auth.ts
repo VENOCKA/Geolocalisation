@@ -88,7 +88,7 @@ export const createAccount = async (email: string, password: string, confirmePas
           if (!user) {
             setUser(userCredential.user.uid, {
               email: userCredential.user.email,
-              name: userCredential.user.displayName,
+              name: userCredential.user.displayName ? userCredential.user.displayName : userCredential.user.email?.split('@')[0],
               photo: userCredential.user.photoURL,
               friends: [],
             })

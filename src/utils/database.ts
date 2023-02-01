@@ -55,24 +55,24 @@ export const onSnapshotUser = async (docRef: any, _setData: { (value: any): void
 
 export const onSnapshotFriends = async (uid: string, data: any, _setData: { (value: any): void }) => {
     const docRef = collection(firestore, 'users', uid, 'friends')
+    let friends: any = {...data}
+
     const unsub = onSnapshot(docRef,
         (snapshot: any) => {
-            let friends: any = {...data}
         
-            snapshot.forEach((doc: any) => {
+            snapshot.docChanges().forEach((change: any) => {
 
-                onSnapshotUser(doc.data().userInfo, (user: any) => {
+                onSnapshotUser(change.doc.data().userInfo, (user: any) => {
                     const u: any = {}
-                    u[doc.id] = {
+                    friends[change.doc.id] = {
                         ...user,
-                        id: doc.id,
-                        chatDocRef: doc.data().chatInfo,
-                        userDocRef: doc.data().userInfo,
+                        id: change.doc.id,
+                        chatDocRef: change.doc.data().chatInfo,
+                        userDocRef: change.doc.data().userInfo,
                     }
-                    friends = {...friends, ...u}
+                    // friends = {...friends, ...u}
                     _setData(friends)
                 })
-                
             })
             console.log('Friends data updated')
         },
@@ -89,11 +89,11 @@ export const onSnapshotMessages = async (chatDocRef: any, data: any, _setData: {
             let messages: any = {...data}
             let u: any = []
         
-            snapshot.forEach((doc: any) => {
+            snapshot.docChanges().forEach((change: any) => {
                 u = [...u, {
-                    id: doc.id,
-                    ...doc.data(),
-                    userId: doc.data().user.id,
+                    id: change.doc.id,
+                    ...change.doc.data(),
+                    userId: change.doc.data().user.id,
                 }]  
             })
             messages[chatDocRef.id] = u
@@ -176,4 +176,45 @@ export const setGeoloc = async (uid: string, data: any) => {
     const docRef = doc(firestore, "users", uid)
     await updateDoc(docRef, data)
     console.log('User data saved');
+}
+
+export const addFriend = async (uid: string, email: any) => {
+    const q = query(collection(firestore, 'users'), where('email', '==', email))
+
+    let friend: any = null
+    await getDocs(q).then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            console.log(doc.id, " => ", doc.data());
+            
+            friend = {
+                ...doc.data(),
+                id: doc.id,
+            }
+        })
+    })
+
+
+    if (!friend) {
+        return 'User not found'
+    }
+    console.log(friend);
+    
+    // const userExists = await getDoc(doc(firestore, 'users', friend.id)).then((doc) => doc.exists())
+    // if (!userExists) {
+    //     return 'User not found'
+    // }
+    
+    const userDocRef = collection(firestore, 'users', uid, 'friends')
+    const friendDocRef = collection(firestore, 'users', friend.id, 'friends')
+
+    await setDoc(doc(userDocRef, friend.id), {
+        userInfo: doc(firestore, 'users', friend.id),
+        chatInfo: null,
+    })
+
+    await setDoc(doc(friendDocRef, uid), {
+        userInfo: doc(firestore, 'users', uid),
+        chatInfo: null,
+    })
+
 }
