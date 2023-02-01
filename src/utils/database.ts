@@ -56,24 +56,28 @@ export const onSnapshotUser = async (docRef: any, _setData: { (value: any): void
 export const onSnapshotFriends = async (uid: string, data: any, _setData: { (value: any): void }) => {
     const docRef = collection(firestore, 'users', uid, 'friends')
     let friends: any = {...data}
-
+    
     const unsub = onSnapshot(docRef,
         (snapshot: any) => {
-        
-            snapshot.docChanges().forEach((change: any) => {
+            // console.log(friends);
+            snapshot.forEach((doc: any) => {
 
-                onSnapshotUser(change.doc.data().userInfo, (user: any) => {
+                onSnapshotUser(doc.data().userInfo, (user: any) => {
                     const u: any = {}
-                    friends[change.doc.id] = {
+                    // console.log(change.doc.id);
+                    
+                    friends[doc.id] = {
                         ...user,
-                        id: change.doc.id,
-                        chatDocRef: change.doc.data().chatInfo,
-                        userDocRef: change.doc.data().userInfo,
+                        id: doc.id,
+                        chatDocRef: doc.data().chatInfo,
+                        userDocRef: doc.data().userInfo,
                     }
                     // friends = {...friends, ...u}
+                    
                     _setData(friends)
                 })
             })
+            // console.log(friends);
             console.log('Friends data updated')
         },
         (error: any) => {
@@ -89,11 +93,11 @@ export const onSnapshotMessages = async (chatDocRef: any, data: any, _setData: {
             let messages: any = {...data}
             let u: any = []
         
-            snapshot.docChanges().forEach((change: any) => {
+            snapshot.forEach((doc: any) => {
                 u = [...u, {
-                    id: change.doc.id,
-                    ...change.doc.data(),
-                    userId: change.doc.data().user.id,
+                    id: doc.id,
+                    ...doc.data(),
+                    userId: doc.data().user.id,
                 }]  
             })
             messages[chatDocRef.id] = u
@@ -183,9 +187,7 @@ export const addFriend = async (uid: string, email: any) => {
 
     let friend: any = null
     await getDocs(q).then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            console.log(doc.id, " => ", doc.data());
-            
+        querySnapshot.forEach((doc) => {   
             friend = {
                 ...doc.data(),
                 id: doc.id,
@@ -197,7 +199,6 @@ export const addFriend = async (uid: string, email: any) => {
     if (!friend) {
         return 'User not found'
     }
-    console.log(friend);
     
     // const userExists = await getDoc(doc(firestore, 'users', friend.id)).then((doc) => doc.exists())
     // if (!userExists) {
